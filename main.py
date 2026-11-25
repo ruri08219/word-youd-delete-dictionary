@@ -19,10 +19,21 @@ WORD = "gaslighting"
 
 
 def main() -> int:
+    # Gate validation: the entry must be a single word, 1-77 chars.
+    word = WORD.strip()
+    if not word or len(word) > 77 or any(ch.isspace() for ch in word):
+        print(
+            "error: WORD must be a single token, 1-77 chars, no whitespace",
+            file=sys.stderr,
+        )
+        return 1
     out_dir = os.environ.get("OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
-    with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as f:
-        f.write(WORD)
+    target = os.path.join(out_dir, "entry.txt")
+    tmp = target + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        f.write(word)
+    os.replace(tmp, target)
     return 0
 
 
